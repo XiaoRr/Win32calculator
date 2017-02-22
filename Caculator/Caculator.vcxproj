@@ -165,9 +165,7 @@
     <ResourceCompile Include="Caculator.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="256.ico" />
     <Image Include="full.ico" />
-    <Image Include="icon1.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

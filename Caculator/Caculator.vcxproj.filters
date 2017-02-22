@@ -51,12 +51,6 @@
     <Image Include="small.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="icon1.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="256.ico">
-      <Filter>资源文件</Filter>
-    </Image>
     <Image Include="full.ico">
       <Filter>资源文件</Filter>
     </Image>

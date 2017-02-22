@@ -4,19 +4,12 @@
 
 
 #include "stdafx.h"
-
+#include "MyCaculator.h"
 // 窗口函数的函数原形
 LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 
 static HWND btn[19], textview;
-long double ans = 0, x = 0;			//操作数a，操作数x (ans ? x = 答案）
-std::wstring c = L" ";				//运算符
-std::wstring xstring;				//输入数的string版
-int flag = 1;						//决定显示ans还是x(1:x 0:ans)
-int digit = -1;						//小数点特判
-int error = 0;							//错误特判
-int flag2 = 1;						//刚按过=号则为0
-int flag3 = 1;						//刚按过符号则为0
+Caculator cl;
 
 HFONT 显示器字体 = CreateFont
 (
@@ -112,261 +105,19 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	return msg.wParam;
 }
 
-std::wstring LongDoubleToWString(long double tmp)
-{
-	std::wstring ans, ans2;
-	std::wstringstream wss,wss2;
-	wss << tmp;
-	wss >> ans;
-	int flg = 1;
-	for (int i = 0; i<ans.length(); i++)
-	{
-		if (ans[i] == L'.')
-		{
-			flg = 0;
-		}
-		if (ans[i] == L'e')
-		{
-			flg = 2;
-		}
-	}
-	if(flg == 0)		//只有小数点
-	{
-		wss2 << std::fixed << std::setprecision(9) << tmp;
-		wss2 >> ans;
-		int j;
-		for (j = ans.length() - 1; j >= 1; j--)
-		{
-			if (ans[j] != L'0' && ans[j] != L'.')break;
-		}
-		return ans.substr(0, j + 1);
-	}
-	if (flg == 2)		//有科学计数法
-	{
-		wss2 << std::scientific << std::setprecision(9) << tmp;
-		wss2 >> ans;
-		return ans;
-	}
-	return ans;
-}
-//清除
-void CLR()
-{
-	c = L" ";
-	ans = x = error = 0;
-	digit = -1;
-	flag = flag2 = flag3 = 1;
-	xstring = L"";
-}
-//添加数字
-void addNum(int n)
-{
-	if (!flag2 && flag3) {
-		CLR();
-	}
-	flag = flag2 = flag3 = 1;
-	if (xstring.length() > 14)return;
-	if (n == -1 && digit > 0)return;
-	if(n == -1){
-		if (xstring == L"")xstring += L'0';
-		xstring += '.';
-		digit = 10;
-		return;
-	}
-	if (xstring == L"0")xstring = L"";
-	xstring += (n + L'0');
 
-	if (digit == -1) {
-		x = x * 10 + n;
-		return;
-	}
-	x = x + n * 1.0 / digit;
-	digit *= 10;
-}
 
-//计算
-void cal()
-{
-	flag = flag2 = 0;
-	flag3 = 1;
-	switch (c[0])
-	{
-	case '*':
-		ans *= x;
-		break;
-	case '/':
-		if (x == 0) {
-			error = 2; break;
-		}
-		ans /= x;
-		break;
-	case '-':
-		ans -= x;
-		break;
-	case '+':
-		ans += x;
-		break;
-	case L"√"[0]:
-		ans = sqrt(ans);
-	default:
-		ans = x;
-	}
-}
-
-void addSign(std::wstring tmp)
-{
-	
-	if (!flag3) {
-		c = tmp;
-		return;
-	}
-	if (flag2 && c != L" ") {
-		cal();
-	}
-	xstring = L"";
-	flag2 = 1;
-	c = tmp;
-	if(flag)ans = x;
-	x = 0;
-	digit = -1;
-	flag = flag3 = 0;
-}
 void analysis(HWND lParam)
 {
-	if(lParam == btn[0])	//7
-	{
-		addNum(7);
-		return;
-	}
-	if (lParam == btn[1])	//8
-	{
-		addNum(8);
-		return;
-	}
-	if (lParam == btn[2])	//9
-	{
-		addNum(9);
-		return;
-	}
-	if (lParam == btn[3])	//sqr
-	{
-		if (flag2 == 0)
-		{
-			if (ans < 0)error = 3;
-			ans = sqrt(ans);
-		}
-		else {
-			if (x < 0)error = 3;
-			x = sqrt(x);
-			xstring = LongDoubleToWString(x);
-			return;
-		}
-		flag2 = 0;
-		return;
-	}
-	if (lParam == btn[4])	//C
-	{
-		CLR();
-		return;
-	}
-	if (lParam == btn[5])	//4
-	{
-		addNum(4);
-		return;
-	}
-	if (lParam == btn[6])	//5
-	{
-		addNum(5);
-		return;
-	}
-	if (lParam == btn[7])	//6
-	{
-		addNum(6);
-		return;
-	}
-	if (lParam == btn[8])	//+
-	{
-
-		addSign(L"+");
-		return;
-	}
-	if (lParam == btn[9])	//-
-	{
-		addSign(L"-");
-		return;
-	}
-	if (lParam == btn[10])	//1
-	{
-		addNum(1);
-		return;
-	}
-	if (lParam == btn[11])	//2
-	{
-		addNum(2);
-		return;
-	}
-	if (lParam == btn[12])	//3
-	{
-		addNum(3);
-		return;
-	}
-	if (lParam == btn[13])	//*
-	{
-		addSign(L"*");
-		return;
-	}
-	if (lParam == btn[14])	// /
-	{
-		addSign(L"/");
-		return;
-	}
-	if (lParam == btn[15])	//0
-	{
-		addNum(0);
-		return;
-	}
-	if (lParam == btn[16])	//.
-	{
-		if(digit == -1)			//只有第一个小数点有效
-			addNum(-1);
-		return;
-	}
-	if (lParam == btn[17])	//=
-	{
-		cal();
-		return;
-	}
-	if (lParam == btn[18])	//%
-	{
-		if (!flag2)x = 0;
-		x = ans*x / 100;
-		xstring = LongDoubleToWString(x);
-		return;
-	}
+	char hash[] = "789SC456+-123*/0.=%";
+	for (int i = 0; i < 19; i++)
+		if (lParam == btn[i])
+			return cl.input(hash[i]);
 }
 
 void setText()
 {
-	if (error == 1)
-	{
-		SetWindowText(textview, L"溢出");
-		return;
-	}
-	if (error == 2)
-	{
-		SetWindowText(textview, L"除数不能为0");
-		return;
-	}
-	if (error == 3)
-	{
-		SetWindowText(textview, L"负数不能开方");
-		return;
-	}
-
-	std::wstring show;
-	if (xstring == L"" && flag == 1) show = L"0";
-	else show = flag ? xstring : (LongDoubleToWString(ans));
-	SetWindowText(textview, show.c_str());
+	SetWindowText(textview, cl.getString().c_str());
 }
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -433,25 +184,12 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 	case WM_CHAR:
 	{
 		char tmpChar = (char)wParam ;
-		if (tmpChar >= '0' && tmpChar <= '9')
-			addNum(tmpChar - '0');
-		if (tmpChar == '.')
-			analysis(btn[16]);		
-		if (tmpChar == '+')
-			analysis(btn[8]);		
-		if (tmpChar == '-')
-			analysis(btn[9]);		
-		if (tmpChar == '*')
-			analysis(btn[13]);		
-		if (tmpChar == '/')
-			analysis(btn[14]);
-		if (tmpChar == '%')
-			analysis(btn[18]);
+		if ((tmpChar >= '0' && tmpChar <= '9') || tmpChar == '.' || tmpChar == '*' || 
+			tmpChar == '/' || tmpChar == '+' || tmpChar == '-' || tmpChar == 'c' ||
+			tmpChar == 'C' || tmpChar == '%')
+			cl.input(tmpChar);
 		if (tmpChar == '=' || tmpChar == 13)
-			analysis(btn[17]);
-		if (tmpChar == 'c' || tmpChar == 'C')
-			analysis(btn[4]);
-		
+			cl.input('=');
 		setText();
 		return 0;
 	}

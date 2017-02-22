@@ -58,7 +58,14 @@ private:
 		{
 			wss2 << std::scientific << std::setprecision(9) << tmp;
 			wss2 >> ans;
-			return ans;
+			int i = ans.length(), j;
+			for(j = ans.length() -1;j>=1;j--)
+			{
+				if (i != ans.length() && ans[j] != L'0')break;
+				if (ans[j] == L'e')i = j;
+				
+			}
+			return ans.substr(0,j+1) + ans.substr(i,ans.length());
 		}
 		return ans;
 	}
@@ -180,10 +187,6 @@ public:
 			if (flag2 == 0)
 			{
 				if (ans < 0)error = 3;
-				//ans = sqrt(ans);
-				//flag3 = 1;
-				//flag = 0;
-				//return;
 				x = sqrt(ans);
 				c = L" ";
 				xstring = LongDoubleToWString(x);
@@ -192,16 +195,12 @@ public:
 				ans = x;
 				return;
 			}
-			 {
-				if (x < 0)error = 3;
-				x = sqrt(x);
-				xstring = LongDoubleToWString(x);
-				flag3 = 1;
-				flag = 1;
-				//flag2 = 0;
-				//if (c == L" ")flag2 = 0;
-				return;
-			}
+			if (x < 0)error = 3;
+			x = sqrt(x);
+			xstring = LongDoubleToWString(x);
+			flag3 = 1;
+			flag = 1;
+			return;
 			
 			return;
 		case '.':
@@ -209,6 +208,7 @@ public:
 				addNum(-1);
 			return;
 		case '=':
+		case 13: //»Ø³µ
 			cal();
 			return;
 		case '%':

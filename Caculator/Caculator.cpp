@@ -1,8 +1,6 @@
 ///////////////////////////////////////////////////////////////
 // 04FirstWindow.cpp文件
 
-
-
 #include "stdafx.h"
 #include "MyCaculator.h"
 // 窗口函数的函数原形
@@ -83,7 +81,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	if (hwnd == NULL)
 	{
-		::MessageBox(NULL, _T("创建窗口出错！"), _T("error"), MB_OK);
+		MessageBox(NULL, _T("创建窗口出错！"), _T("error"), MB_OK);
 		return -1;
 	}
 
@@ -104,8 +102,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	// 当GetMessage返回0时程序结束
 	return msg.wParam;
 }
-
-
 
 void analysis(HWND lParam)
 {
@@ -131,16 +127,11 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 	{
 	case WM_PAINT: // 窗口客户区需要重画
 	{
-		HDC hdc;
 		PAINTSTRUCT ps;
 		// 使无效的客户区变的有效，并取得设备环境句柄
-		hdc = ::BeginPaint(hwnd, &ps);
-
+		BeginPaint(hwnd, &ps);
 		setText();
-		//SetWindowText(textview, (std::to_wstring(x) + L" " + std::to_wstring(ans)).c_str());
-
-		::EndPaint(hwnd, &ps);
-		//UpdateWindow(hwnd);
+		EndPaint(hwnd, &ps);
 		return 0;
 	}
 	case WM_CREATE:
@@ -183,19 +174,12 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 	}
 	case WM_CHAR:
 	{
-		char tmpChar = (char)wParam ;
-		if ((tmpChar >= '0' && tmpChar <= '9') || tmpChar == '.' || tmpChar == '*' || 
-			tmpChar == '/' || tmpChar == '+' || tmpChar == '-' || tmpChar == 'c' ||
-			tmpChar == 'C' || tmpChar == '%')
-			cl.input(tmpChar);
-		if (tmpChar == '=' || tmpChar == 13)
-			cl.input('=');
+		cl.input((char)wParam);
 		setText();
 		return 0;
 	}
 	case WM_DESTROY: // 正在销毁窗口
-					 // 向消息队列投递一个WM_QUIT消息，促使GetMessage函数返回0，结束消息循环wv
-		::PostQuitMessage(0);
+		PostQuitMessage(0); // 向消息队列投递一个WM_QUIT消息，促使GetMessage函数返回0，结束消息循环wv
 		return 0;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))

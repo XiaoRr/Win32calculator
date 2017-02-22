@@ -48,9 +48,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>资源文件</Filter>
-    </Image>
     <Image Include="full.ico">
       <Filter>资源文件</Filter>
     </Image>

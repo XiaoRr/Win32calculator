@@ -30,6 +30,9 @@
     <ClInclude Include="Caculator.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MyCaculator.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,7 +51,13 @@
     <Image Include="small.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="Caculator.ico">
+    <Image Include="icon1.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="256.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="full.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

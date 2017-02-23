@@ -237,7 +237,7 @@ public:
 			if (!flag2)x = 0;
 			x = ans*x / 100;
 			xstring = LongDoubleToWString(x);
-			prestring = LongDoubleToWString(ans) + L"*" + LongDoubleToWString(x) + L"=";
+			//prestring = LongDoubleToWString(ans) + L"*" + LongDoubleToWString(x) + L"=";
 			return;
 		case '!':
 			if(flag2 == 0)

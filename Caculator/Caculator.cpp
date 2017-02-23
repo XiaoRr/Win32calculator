@@ -73,9 +73,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		CW_USEDEFAULT,		// X，初始 X 坐标		
 		CW_USEDEFAULT,		// Y，初始 Y 坐标		
 		450,		// nWidth，宽度			
-		450,		// nHeight，高度			
+		470,		// nHeight，高度			
 		NULL,			// hWndParent，父窗口句柄			
-		NULL,			// hMenu，菜单句柄		
+		LoadMenu(hInstance, MAKEINTRESOURCE(IDC_CACULATOR)),			// hMenu，菜单句柄		
 		hInstance,		// hlnstance，程序实例句柄		
 		NULL);			// lpParam，用户数据			
 
@@ -199,6 +199,13 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 		{
 		case IDM_EXIT:
 			::SendMessage(hwnd, WM_CLOSE, 0, 0);
+			break;
+
+		case IDM_ABOUT:
+			MessageBox(hwnd,L"作者：小r\nhttp://xcoder.cc",L"关于",MB_OK);
+			break;
+		case IDM_HELP:
+			MessageBox(hwnd, L"支持连续运算，和正常计算器手感无区别", L"帮助", MB_OK);
 			break;
 		}
 		analysis((HWND)lParam);

@@ -101,10 +101,10 @@ private:
 			xstring += (n + L'0');
 
 			if (digit == -1) {
-				x = x * 10 + n;
+				x = x * 10 + x<0?-n:n;
 				break;
 			}
-			x = x + n * 1.0 / digit;
+			x = x + (x<0?-1:1)* n * 1.0 / digit;
 			digit *= 10;
 		} while (0);
 		//prestring = xstring;
@@ -113,6 +113,10 @@ private:
 	//计算
 	void cal()
 	{
+		if (flag2 == 0)
+		{
+			x = ans;
+		}
 		flag = flag2 = 0;
 		flag3 = 1;
 		prestring = L"" + LongDoubleToWString(ans) + L' ' + (wchar_t)c + L' ' + LongDoubleToWString(x) + L'=';
@@ -137,12 +141,14 @@ private:
 			ans = sqrt(ans);
 		default:
 			ans = x;
+			prestring = LongDoubleToWString(ans) + L'=';
 		}
 	}
 
 	//添加符号
 	void addSign(char tmp)
 	{
+		flag4 = 0;
 		if (!flag3) {
 			c = tmp;
 			prestring = L"" + LongDoubleToWString(ans) + L' ' + (wchar_t)c ;
@@ -191,11 +197,19 @@ public:
 		case 'S':
 		case 's':
 			//根号即是对当前显示在屏幕上的数进行暴力处理即可
-			if (flag2 == 0)
+			if (flag == 0)
 			{
-				if (ans < 0)error = 3;
-				ans = sqrt(ans);
-				//prestring = L"√" + LongDoubleToWString(ans) + L"=";
+				long double tmp = ans;
+				if (ans < 0) {
+					prestring = L"√" + LongDoubleToWString(tmp) + L"=";
+					error = 3;
+					return;
+				}
+				CLR();
+				prestring = L"√" + LongDoubleToWString(tmp) + L"=";
+				flag = 0;
+				ans = sqrt(tmp);
+				
 			}else
 			{
 				if (x < 0)error = 3;
@@ -225,7 +239,7 @@ public:
 				ans = -ans;
 			}else
 			{
-				x = -x;
+				if(x!=0)x = -x;
 				xstring = LongDoubleToWString(x);
 			}
 

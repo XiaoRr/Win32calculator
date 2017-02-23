@@ -35,7 +35,12 @@ private:
 		if(ans == L"inf")
 		{
 			error = 1;
-			return L"溢出";
+			return L"正无穷";
+		}
+		if( ans == L"-inf")
+		{
+			error = 1;
+			return L"负无穷";
 		}
 		int flg = 1;
 		for (int i = 0; i<ans.length(); i++)

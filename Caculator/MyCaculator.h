@@ -5,7 +5,7 @@ class Caculator
 {
 private:
 	long double ans = 0, x = 0;			//操作数a，操作数x (ans ? x = 答案）
-	std::wstring c = L" ";				//运算符
+	char c = ' ';				//运算符
 	std::wstring xstring;				//输入数的string版
 	int flag = 1;						//决定显示ans还是x(1:x 0:ans)
 	int digit = -1;						//小数点特判
@@ -13,6 +13,7 @@ private:
 	int flag2 = 1;						//刚按过=号则为0
 	int flag3 = 1;						//刚按过符号则为0
 	int flag4 = 0;						//刚按过根号则为1
+	std::wstring prestring;				//表达式
 
 public:
 	Caculator()
@@ -73,37 +74,40 @@ private:
 	//清除
 	void CLR()
 	{
-		c = L" ";
+		c = ' ';
 		ans = x = error = 0;
 		digit = -1;
 		flag = flag2 = flag3 = 1;
-		xstring = L"";
+		prestring = xstring = L"";
 	}
 	//添加数字
 	void addNum(int n)
 	{
-		if (!flag2 && flag3 || flag4) {
-			CLR();
-		}
-		flag = flag2 = flag3 = 1;
-		flag4 = 0;
-		if (xstring.length() > 14)return;
-		if (n == -1 && digit > 0)return;
-		if (n == -1) {
-			if (xstring == L"")xstring += L'0';
-			xstring += '.';
-			digit = 10;
-			return;
-		}
-		if (xstring == L"0")xstring = L"";
-		xstring += (n + L'0');
+		do {
+			if (!flag2 && flag3 || flag4) {
+				CLR();
+			}
+			flag = flag2 = flag3 = 1;
+			flag4 = 0;
+			if (xstring.length() > 14)return;
+			if (n == -1 && digit > 0)return;
+			if (n == -1) {
+				if (xstring == L"")xstring += L'0';
+				xstring += '.';
+				digit = 10;
+				break;
+			}
+			if (xstring == L"0")xstring = L"";
+			xstring += (n + L'0');
 
-		if (digit == -1) {
-			x = x * 10 + n;
-			return;
-		}
-		x = x + n * 1.0 / digit;
-		digit *= 10;
+			if (digit == -1) {
+				x = x * 10 + n;
+				break;
+			}
+			x = x + n * 1.0 / digit;
+			digit *= 10;
+		} while (0);
+		//prestring = xstring;
 	}
 
 	//计算
@@ -111,7 +115,8 @@ private:
 	{
 		flag = flag2 = 0;
 		flag3 = 1;
-		switch (c[0])
+		prestring = L"" + LongDoubleToWString(ans) + L' ' + (wchar_t)c + L' ' + LongDoubleToWString(x) + L'=';
+		switch (c)
 		{
 		case '*':
 			ans *= x;
@@ -128,7 +133,7 @@ private:
 		case '+':
 			ans += x;
 			break;
-		case L"√"[0]:
+		case 'S':
 			ans = sqrt(ans);
 		default:
 			ans = x;
@@ -136,13 +141,14 @@ private:
 	}
 
 	//添加符号
-	void addSign(std::wstring tmp)
+	void addSign(char tmp)
 	{
 		if (!flag3) {
 			c = tmp;
+			prestring = L"" + LongDoubleToWString(ans) + L' ' + (wchar_t)c ;
 			return;
 		}
-		if (flag2 && c != L" ") {
+		if (flag2 && c != ' ') {
 			cal();
 		}
 		xstring = L"";
@@ -152,10 +158,11 @@ private:
 		x = 0;
 		digit = -1;
 		flag = flag3 = 0;
+		prestring = L"" + LongDoubleToWString(ans) + L' ' + (wchar_t)c;
 	}
 
 public:
-	//获取字符输入（0-9，+，-，*，/，%(百分比)，=，C(清除)，S(根号)）
+	//获取字符输入（0-9，+，-，*，/，%(百分比)，=，!(符号相反),C(清除)，S(根号)）
 	void input(char type)
 	{
 		if (type >= '0' && type <= '9')
@@ -166,16 +173,16 @@ public:
 		switch (type)
 		{
 		case '-':
-			addSign(L"-");
+			addSign('-');
 			return;
 		case '+':
-			addSign(L"+");
+			addSign('+');
 			return;
 		case '*':
-			addSign(L"*");
+			addSign('*');
 			return;
 		case '/':
-			addSign(L"/");
+			addSign('/');
 			return;
 		case 'C':
 		case 'c':
@@ -183,25 +190,20 @@ public:
 			return;
 		case 'S':
 		case 's':
-			flag4 = 1;
+			//根号即是对当前显示在屏幕上的数进行暴力处理即可
 			if (flag2 == 0)
 			{
 				if (ans < 0)error = 3;
-				x = sqrt(ans);
-				c = L" ";
+				ans = sqrt(ans);
+				//prestring = L"√" + LongDoubleToWString(ans) + L"=";
+			}else
+			{
+				if (x < 0)error = 3;
+				x = sqrt(x);
 				xstring = LongDoubleToWString(x);
-				flag3 = 1;
-				flag2 = 1;
-				ans = x;
-				return;
+				//prestring = L"√" + LongDoubleToWString(x) + L"=";
 			}
-			if (x < 0)error = 3;
-			x = sqrt(x);
-			xstring = LongDoubleToWString(x);
-			flag3 = 1;
-			flag = 1;
-			return;
-			
+			flag4 = 1;
 			return;
 		case '.':
 			if (digit == -1)			//只有第一个小数点有效
@@ -215,7 +217,18 @@ public:
 			if (!flag2)x = 0;
 			x = ans*x / 100;
 			xstring = LongDoubleToWString(x);
+			prestring = LongDoubleToWString(ans) + L"*" + LongDoubleToWString(x) + L"%=";
 			return;
+		case '!':
+			if(flag2 == 0)
+			{
+				ans = -ans;
+			}else
+			{
+				x = -x;
+				xstring = LongDoubleToWString(x);
+			}
+
 		default:
 			return;
 		}
@@ -235,5 +248,10 @@ public:
 		}
 		if (xstring == L"" && flag == 1) return L"0";
 		return flag ? xstring : (LongDoubleToWString(ans));
+	}
+
+	std::wstring getProcess()
+	{
+		return prestring;
 	}
 };

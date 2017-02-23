@@ -6,7 +6,7 @@
 // 窗口函数的函数原形
 LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 
-static HWND btn[19], textview;
+static HWND btn[20], textview ,textview2;
 Caculator cl;
 
 HFONT 显示器字体 = CreateFont
@@ -73,7 +73,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		CW_USEDEFAULT,		// X，初始 X 坐标		
 		CW_USEDEFAULT,		// Y，初始 Y 坐标		
 		450,		// nWidth，宽度			
-		430,		// nHeight，高度			
+		450,		// nHeight，高度			
 		NULL,			// hWndParent，父窗口句柄			
 		NULL,			// hMenu，菜单句柄		
 		hInstance,		// hlnstance，程序实例句柄		
@@ -105,24 +105,25 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 void analysis(HWND lParam)
 {
-	char hash[] = "789SC456+-123*/0.=%";
-	for (int i = 0; i < 19; i++)
+	char hash[] = "789SC456+-123*/!0.=%";
+	for (int i = 0; i < 20; i++)
 		if (lParam == btn[i])
 			return cl.input(hash[i]);
 }
 
 void setText()
 {
-	SetWindowText(textview, cl.getString().c_str());
+	SetWindowText(textview, cl.getProcess() .c_str());
+	SetWindowText(textview2, cl.getString().c_str());
 }
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	const int btnposX[] = { 10,90,170,270,350 };
-	const int btnposY[] = { 60,140,220,300 };
+	const int btnposY[] = { 90,170,250,330 };
 	const std::wstring btnText[] = { L"7",L"8",L"9",L"√",L"C",
 								L"4",L"5",L"6",L"+",L"-",
 								L"1",L"2",L"3",L"*",L"/",
-								L"0",L" ",L".",L"=",L"%"};
+								L"±",L"0",L".",L"=",L"%"};
 	switch (message)
 	{
 	case WM_PAINT: // 窗口客户区需要重画
@@ -138,37 +139,49 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 	{
 		int tmp = 0;
 		textview = CreateWindow(
-			_T("EDIT"), 
-			_T("0"), 
-			WS_VISIBLE | WS_CHILD | DT_VCENTER | WS_BORDER | ES_RIGHT, 
-			10, 
-			10, 
-			410, 
-			40, 
-			hwnd, 
-			NULL, 
-			NULL, 
+			_T("EDIT"),
+			_T("0"),
+			WS_VISIBLE | WS_CHILD | DT_VCENTER | WS_BORDER | ES_RIGHT,
+			10,
+			10,
+			410,
+			25,
+			hwnd,
+			NULL,
+			NULL,
 			NULL);
 
-		SendMessage(textview, WM_SETFONT, (WPARAM)显示器字体, 1);
+		textview2 = CreateWindow(
+			_T("EDIT"),
+			_T("0"),
+			WS_VISIBLE | WS_CHILD | DT_VCENTER | WS_BORDER | ES_RIGHT,
+			10,
+			40,
+			410,
+			40,
+			hwnd,
+			NULL,
+			NULL,
+			NULL);
+		//SendMessage(textview, WM_SETFONT, (WPARAM)显示器字体, 1);
+		SendMessage(textview2, WM_SETFONT, (WPARAM)显示器字体, 1);
 
 		for (int i = 0; i < 20; i++)
 		{
-			if (i == 16)continue;
-			btn[tmp++] = CreateWindow(
+			btn[i] = CreateWindow(
 				_T("BUTTON"),   // predefined class  
 				btnText[i].c_str(),       // button text  
 				WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // styles    
-				btnposX[i%5],         // starting x position  
-				btnposY[i/5],         // starting y position  
-				i==15?150:70,        // button width  
+				btnposX[i % 5],         // starting x position  
+				btnposY[i / 5],         // starting y position  
+				70,        // button width  
 				70,        // button height  
 				hwnd,       // parent window  
 				NULL,       // No menu  
 				(HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE),
 				NULL);      // pointer not needed  
 		}
-		for(int i=0;i<19;i++)
+		for (int i = 0; i < 20; i++)
 			::SendMessage(btn[i], WM_SETFONT, (WPARAM)按键字体, 1);
 		return 0;
 	}

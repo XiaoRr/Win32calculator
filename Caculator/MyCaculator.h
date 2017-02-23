@@ -32,6 +32,11 @@ private:
 		std::wstringstream wss, wss2;
 		wss << tmp;
 		wss >> ans;
+		if(ans == L"inf")
+		{
+			error = 1;
+			return L"Òç³ö";
+		}
 		int flg = 1;
 		for (int i = 0; i<ans.length(); i++)
 		{
@@ -113,10 +118,6 @@ private:
 	//¼ÆËã
 	void cal()
 	{
-		if (flag2 == 0)
-		{
-			x = ans;
-		}
 		flag = flag2 = 0;
 		flag3 = 1;
 		prestring = L"" + LongDoubleToWString(ans) + L' ' + (wchar_t)c + L' ' + LongDoubleToWString(x) + L'=';
@@ -231,7 +232,7 @@ public:
 			if (!flag2)x = 0;
 			x = ans*x / 100;
 			xstring = LongDoubleToWString(x);
-			prestring = LongDoubleToWString(ans) + L"*" + LongDoubleToWString(x) + L"%=";
+			prestring = LongDoubleToWString(ans) + L"*" + LongDoubleToWString(x) + L"=";
 			return;
 		case '!':
 			if(flag2 == 0)

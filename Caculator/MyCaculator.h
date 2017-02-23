@@ -62,7 +62,7 @@ private:
 			int i = ans.length(), j;
 			for(j = ans.length() -1;j>=1;j--)
 			{
-				if (i != ans.length() && ans[j] != L'0')break;
+				if (i != ans.length() && ans[j] != L'0' && ans[j] != L'.')break;
 				if (ans[j] == L'e')i = j;
 				
 			}
@@ -101,7 +101,7 @@ private:
 			xstring += (n + L'0');
 
 			if (digit == -1) {
-				x = x * 10 + x<0?-n:n;
+				x = x * 10 + (x<0?-n:n);
 				break;
 			}
 			x = x + (x<0?-1:1)* n * 1.0 / digit;
